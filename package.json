@@ -13,9 +13,24 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "tsc"
     },
-    "keywords": [],
-    "author": "",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/maicFir/server-fs-mcp.git"
+    },
+    "keywords": [
+        "mcp",
+        "model-context-protocol",
+        "mcp-server",
+        "filesystem",
+        "fs",
+        "local-files"
+    ],
+    "author": "maicFir",
     "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/maicFir/server-fs-mcp/issues"
+    },
+    "homepage": "https://github.com/maicFir/server-fs-mcp#readme",
     "type": "module",
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.29.0"
