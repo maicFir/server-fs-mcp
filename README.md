@@ -1,0 +1,91 @@
+# Local Filesystem MCP Server (maic-server-fs-mcp)
+
+一个基于 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 构建的自定义本地文件系统与命令行执行服务。此工具已被发布至 NPM，支持通过 `npx` 直接在 LLM 客户端（如 Cursor、Claude Desktop 等）中无缝运行。
+
+---
+
+## 🛠️ 核心工具 (Tools)
+
+本 MCP 服务端向 LLM 提供了以下接口能力：
+
+| 工具名称 | 作用描述 | 输入参数 |
+| :--- | :--- | :--- |
+| `readFile` | 读取指定本地文件内容 | `filePath` (string) |
+| `writeFile` | 写入或更新本地文件（若父级目录不存在会自动创建） | `filePath` (string), `content` (string) |
+| `readDirectory` | 列出目标文件夹内容（已自动忽略 `node_modules` 等庞大文件夹） | `filePath` (string, 默认 `.`) |
+| `executeCommand` | 在终端中运行命令（同步执行，最长 30 秒超时） | `command` (string) |
+| `dispatchTask` | 派发特定任务给下属专家（`CODER` 或 `TESTER`） | `worker` ('CODER' \| 'TESTER'), `taskInstruction` (string) |
+| `humanReview` | 人工审核插桩，用于人工确认 | `message` (string) |
+
+---
+
+## 🔌 接入与集成当前 MCP 服务
+
+您可以通过 **NPM 方式直接运行（推荐）**，或者使用**本地克隆源码开发模式**。
+
+### 方式 1: 通过 NPM 接入（最简便，推荐）
+
+#### A. 接入 Cursor 编辑器
+1. 打开 Cursor 设置：进入 **Settings** ➡️ **Features** ➡️ **MCP**。
+2. 点击 **+ Add New MCP Server**：
+   - **Name**: `maic-local-filesystem-mcp`
+   - **Type**: `command`
+   - **Command**:
+     ```bash
+     npx -y maic-server-fs-mcp
+     ```
+3. 点击 **Save**。等待状态指示灯亮起绿色 🟢。
+
+#### B. 接入 Claude Desktop
+1. 打开并编辑 Claude Desktop 的配置文件：
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+2. 在 `mcpServers` 节点内，追加如下配置：
+   ```json
+   {
+     "mcpServers": {
+       "maic-local-filesystem-mcp": {
+         "command": "npx",
+         "args": [
+           "-y",
+           "maic-server-fs-mcp"
+         ]
+       }
+     }
+   }
+   ```
+3. 保存文件并重启 Claude Desktop。
+
+---
+
+### 方式 2: 使用本地克隆源码运行（适合贡献者/二次开发）
+
+#### 1. 安装与构建
+```bash
+git clone <your-repo-url>
+cd maic-local-mcp-tool
+npm install
+npm run build # 编译生成 dist/server.js
+```
+
+#### 2. 在客户端中配置本地路径
+* **Cursor (Command)**:
+  ```bash
+  node maic-local-mcp-tool/dist/server.js
+  ```
+* **Claude Desktop (`claude_desktop_config.json`)**:
+  ```json
+  "maic-local-filesystem-mcp": {
+    "command": "node",
+    "args": [
+      "maic-local-mcp-tool/dist/server.js"
+    ]
+  }
+  ```
+
+---
+
+## ⚠️ 开发者必看避坑指南 (Gotchas)
+
+- **标准输出占用**：MCP 的 stdio 传输机制完全独占了标准输出流 (`stdout`) 用于 JSON-RPC 通信。因此在开发调试时，**绝对不能**在工具执行或初始化逻辑中使用 `console.log()` 或 `process.stdout.write()`。
+- **调试日志**：所有打印日志、调试信息请全部使用 `console.error()` 输出，客户端会自动捕获并展示在控制台或日志文件中。
