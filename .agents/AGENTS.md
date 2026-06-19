@@ -84,7 +84,7 @@ When developing or modifying this MCP Server, you **must** adhere to the followi
   ```
 - **Run (Production - NPM):**
   ```bash
-  npx -y maic-server-fs-mcp
+  npx -y --package maic-server-fs-mcp mcp-server-fs
   ```
 - **Run (Development/Direct):**
   You can run the typescript code directly using `npx tsx server.ts` or set it in your client configurations.

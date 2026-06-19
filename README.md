@@ -32,7 +32,7 @@
    - **Type**: `command`
    - **Command**:
      ```bash
-     npx -y maic-server-fs-mcp
+     npx -y --package maic-server-fs-mcp mcp-server-fs
      ```
 3. 点击 **Save**。等待状态指示灯亮起绿色 🟢。
 
@@ -48,7 +48,9 @@
          "command": "npx",
          "args": [
            "-y",
-           "maic-server-fs-mcp"
+           "--package",
+           "maic-server-fs-mcp",
+           "mcp-server-fs"
          ]
        }
      }
@@ -62,8 +64,8 @@
 
 #### 1. 安装与构建
 ```bash
-git clone <your-repo-url>
-cd maic-local-mcp-tool
+git clone https://github.com/maicFir/server-fs-mcp.git
+cd server-fs-mcp
 npm install
 npm run build # 编译生成 dist/server.js
 ```
@@ -71,14 +73,14 @@ npm run build # 编译生成 dist/server.js
 #### 2. 在客户端中配置本地路径
 * **Cursor (Command)**:
   ```bash
-  node maic-local-mcp-tool/dist/server.js
+  node /absolute/path/to/server-fs-mcp/dist/server.js
   ```
 * **Claude Desktop (`claude_desktop_config.json`)**:
   ```json
   "maic-local-filesystem-mcp": {
     "command": "node",
     "args": [
-      "maic-local-mcp-tool/dist/server.js"
+      "/absolute/path/to/server-fs-mcp/dist/server.js"
     ]
   }
   ```
