@@ -1,6 +1,6 @@
 {
     "name": "maic-server-fs-mcp",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "一个用于读取本地文件的自定义标准 MCP 服务端",
     "main": "./dist/server.js",
     "bin": {

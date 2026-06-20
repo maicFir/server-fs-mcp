@@ -59,11 +59,11 @@ export class LocalCodeRagService {
                         const fullPath = path.join(dir, file);
                         const stat = fs.statSync(fullPath);
                         if (stat.isDirectory()) {
-                            if (!file.startsWith(".") && 
-                                file !== "node_modules" && 
-                                file !== "dist" && 
-                                file !== "build" && 
-                                file !== "out" && 
+                            if (!file.startsWith(".") &&
+                                file !== "node_modules" &&
+                                file !== "dist" &&
+                                file !== "build" &&
+                                file !== "out" &&
                                 file !== "coverage"
                             ) {
                                 scanDir(fullPath);
@@ -92,7 +92,7 @@ export class LocalCodeRagService {
                     try {
                         // 调用 Gemini 官方推荐的 Embedding 模型
                         const response = await this.ai.models.embedContent({
-                            model: "text-embedding-004",
+                            model: "gemini-embedding-001",
                             contents: chunk,
                         });
 
@@ -148,7 +148,7 @@ export class LocalCodeRagService {
         let queryEmbedding: number[] | undefined;
         try {
             const response = await this.ai.models.embedContent({
-                model: "text-embedding-004",
+                model: "gemini-embedding-001",
                 contents: query,
             });
             queryEmbedding = response.embeddings?.[0]?.values;
@@ -192,9 +192,9 @@ let serviceInstance: LocalCodeRagService | null = null;
 
 function getRagService(): LocalCodeRagService {
     if (!serviceInstance) {
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
         if (!apiKey) {
-            throw new Error("未检测到环境变量 GEMINI_API_KEY，无法使用 RAG 搜索/索引功能。请在启动前设置此环境变量。");
+            throw new Error("未检测到环境变量 GOOGLE_GENERATIVE_AI_API_KEY 或 GEMINI_API_KEY，无法使用 RAG 搜索/索引功能。请在启动前设置此环境变量。");
         }
         const ai = new GoogleGenAI({ apiKey });
         serviceInstance = new LocalCodeRagService(ai);
