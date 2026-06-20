@@ -6,12 +6,12 @@
     "outDir": "./dist",
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "esnext",
+    "module": "NodeNext",
     "target": "esnext",
     "types": [
       "node"
     ],
-    "moduleResolution": "bundler",
+    "moduleResolution": "nodenext",
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

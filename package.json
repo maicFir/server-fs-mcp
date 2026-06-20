@@ -1,6 +1,6 @@
 {
     "name": "maic-server-fs-mcp",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "description": "一个用于读取本地文件的自定义标准 MCP 服务端",
     "main": "./dist/server.js",
     "bin": {
@@ -33,6 +33,7 @@
     "homepage": "https://github.com/maicFir/server-fs-mcp#readme",
     "type": "module",
     "dependencies": {
+        "@google/genai": "^2.9.0",
         "@modelcontextprotocol/sdk": "^1.29.0"
     },
     "devDependencies": {

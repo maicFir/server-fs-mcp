@@ -16,6 +16,41 @@
 | `executeCommand` | 在终端中运行命令（同步执行，最长 30 秒超时） | `command` (string) |
 | `dispatchTask` | 派发特定任务给下属专家（`CODER` 或 `TESTER`） | `worker` ('CODER' \| 'TESTER'), `taskInstruction` (string) |
 | `humanReview` | 人工审核插桩，用于人工确认 | `message` (string) |
+| `buildCodebaseIndex` | 扫描并为代码库构建本地向量索引（支持 JS/TS/JSX/TSX） | `dirPath` (string, 默认 `.`) |
+| `searchCodebase` | 语义化检索整个代码库，寻找匹配的代码片段 | `query` (string), `topK` (number, 默认 `3`) |
+
+---
+
+## 🧠 本地代码 RAG 功能说明
+
+为了使用 `buildCodebaseIndex` 和 `searchCodebase`（基于 `text-embedding-004` 模型），您需要在使用前配置 `GEMINI_API_KEY` 环境变量：
+
+* **命令行启动时设置**：
+  ```bash
+  export GEMINI_API_KEY="your-gemini-api-key"
+  npx -y --package maic-server-fs-mcp mcp-server-fs
+  ```
+* **Cursor 编辑器配置**：
+  在 Cursor 设置 MCP 时，您也可以在 Shell 配置文件（如 `~/.zshrc` 或 `~/.bashrc`）中全局导出 `GEMINI_API_KEY`，这样 Cursor 启动的进程可以读取到该变量。
+* **Claude Desktop 配置文件配置 (`claude_desktop_config.json`)**：
+  ```json
+  "maic-local-filesystem-mcp": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "--package",
+      "maic-server-fs-mcp",
+      "mcp-server-fs"
+    ],
+    "env": {
+      "GEMINI_API_KEY": "your-gemini-api-key"
+    }
+  }
+  ```
+
+### 工作机制：
+1. **构建索引**：调用 `buildCodebaseIndex` 时，系统将扫描目录内的所有代码文件并按最长 40 行的窗口进行滑动切片，再通过 Gemini Embeddings API 向量化并保存在项目根目录的 `.rag_cache.json` 中。
+2. **语义化检索**：调用 `searchCodebase` 时，系统向量化您的查询，计算其与本地缓存中所有代码片段的余弦相似度（Cosine Similarity），并返回相似度最高的 `topK` 个真实代码片段。
 
 ---
 
